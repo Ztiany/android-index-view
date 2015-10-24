@@ -27,39 +27,39 @@ public class IndexView extends View {
         init();
     }
 
-    private String[] mSections;//ËùÓĞË÷Òı
-    private int mTextSize = 12;//Ä¬ÈÏ×ÖÌå´óĞ¡
-    private int mHPadding = 10;//Ë®Æ½ÄÚ±ß¾à
-    private int mVPadding = 10;//´¸×Ó±ß¾à
-    private int mWidth;//¿í¶È
-    private int mHeight;//¸ß¶È
+    private String[] mSections;//æ‰€æœ‰ç´¢å¼•
+    private int mTextSize = 12;//é»˜è®¤å­—ä½“å¤§å°
+    private int mHPadding = 10;//æ°´å¹³å†…è¾¹è·
+    private int mVPadding = 10;//é”¤å­è¾¹è·
+    private int mWidth;//å®½åº¦
+    private int mHeight;//é«˜åº¦
 
-    private int mTextRectHeight;//µ¥¸öÎÄ×ÖÇøÓò¸ß¶È
+    private int mTextRectHeight;//å•ä¸ªæ–‡å­—åŒºåŸŸé«˜åº¦
 
 
-    private int mRound = 5;//»¡¶È
+    private int mRound = 5;//å¼§åº¦
 
-    private TextPaint mTextPaint;//Ë÷ÒıÎÄ×Ö»­±Ê
-    private Paint mRectPaint;//»ÒÉ«ÇøÓò»­±Ê
-    private Paint mPopPaint;//ÆøÅİ»­±Ê
-    private TextPaint mPopTextPaint;//Æû°üÎÄ×Ö»­±Ê
+    private TextPaint mTextPaint;//ç´¢å¼•æ–‡å­—ç”»ç¬”
+    private Paint mRectPaint;//ç°è‰²åŒºåŸŸç”»ç¬”
+    private Paint mPopPaint;//æ°”æ³¡ç”»ç¬”
+    private TextPaint mPopTextPaint;//æ±½åŒ…æ–‡å­—ç”»ç¬”
 
     private SectionIndexer mIndexer;
 
-    private int mTextWidth;//ÎÄ×Ö¿í¶È
+    private int mTextWidth;//æ–‡å­—å®½åº¦
 
     public static final byte STATE_SHOWING = 1;
     public static final byte STATE_HIDE = 2;
     public static final byte STATE_NORMAL = 3;
     private byte STATE = STATE_NORMAL;
 
-    private int mTouchIndex = -1 ;//´¥ÃşµÄÎ»ÖÃËùÔÚ½Ç±ê
-    private boolean drawPop;//ÊÇ·ñ»­
-    private int mTouchY =-1;//yµÄÎ»ÖÃ
-    private int mCircleRightMargin = 20 ;//Ô²È¦ÓÒ±ß¾àÀë
-    private float mCircleRadius = 40;//Ô²È¦°ë¾¶
-    private float mDynamicCircleRadius ;//¶¯Ì¬Ô²È¦°à¼¶
-    private int mAnimTime = 300;//¶¯»­Ê±¼ä
+    private int mTouchIndex = -1 ;//è§¦æ‘¸çš„ä½ç½®æ‰€åœ¨è§’æ ‡
+    private boolean drawPop;//æ˜¯å¦ç”»
+    private int mTouchY =-1;//yçš„ä½ç½®
+    private int mCircleRightMargin = 20 ;//åœ†åœˆå³è¾¹è·ç¦»
+    private float mCircleRadius = 40;//åœ†åœˆåŠå¾„
+    private float mDynamicCircleRadius ;//åŠ¨æ€åœ†åœˆç­çº§
+    private int mAnimTime = 300;//åŠ¨ç”»æ—¶é—´
 
     private float scaledDensity;
 
@@ -144,9 +144,9 @@ public class IndexView extends View {
         int left = mWidth - drawRectWidth;
 
 
-        //»­±³¾°
+        //ç”»èƒŒæ™¯
         if(drawPop ) {
-            canvas.drawRoundRect(new RectF(left, 0, mWidth, mHeight), mRound, mRound, mRectPaint);
+            canvas.drawRoundRect(getRect(left), mRound, mRound, mRectPaint);
         }
         mTextRectHeight = (mHeight - 2*mVPadding )/ length;
 
@@ -177,11 +177,11 @@ public class IndexView extends View {
             }
 
 
-            //»­Ô²È¦
+            //ç”»åœ†åœˆ
             canvas.drawCircle(circleX , touchY, mDynamicCircleRadius, mPopPaint);
 
 
-            //»­ÇúÏß
+            //ç”»æ›²çº¿
             float arcX = mCircleRadius*2 + mCircleRightMargin;
             mPath.reset();
             mPath.moveTo(circleX - mDynamicCircleRadius  , touchY);
@@ -190,7 +190,7 @@ public class IndexView extends View {
             canvas.drawPath(mPath , mPopPaint);
 
 
-            //»­ÎÄ×Ö
+            //ç”»æ–‡å­—
             mPopTextPaint.setTextSize(mDynamicCircleRadius*2/scaledDensity);
             float textStartX = circleX - mPopTextPaint.measureText(mSections[mTouchIndex]  )/2;
             float textBaseY = touchY +  (     Math.abs(mPopTextPaint.ascent()) - Math.abs(mPopTextPaint.descent())  )/ 2;
@@ -206,10 +206,13 @@ public class IndexView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if(mSections == null || mSections.length ==0){
+            return false;
+        }
+
         int action = event.getAction();
         int x = (int) event.getX();
-        int y = (int) event.getY();
-        mTouchY = y;
+        mTouchY = (int) event.getY();
         if(!drawPop){
             if( x < mCircleRadius*2 + mCircleRightMargin){
                 return false;
@@ -219,7 +222,12 @@ public class IndexView extends View {
 
 
 
+
         mTouchIndex = getTouchIndexFromEvent(event);
+        if (mIndexer != null) {
+            mIndexer.getPositionForSection(mTouchIndex);
+        }
+
         Log.d(this.getClass().getSimpleName() , "index = "+ mTouchIndex);
         Log.d(this.getClass().getSimpleName() , "drawPop = "+ drawPop);
 
@@ -237,6 +245,7 @@ public class IndexView extends View {
                 }
                 break;
             case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_CANCEL:
                 drawPop = false;
                 STATE = STATE_HIDE;
                 Log.d(this.getClass().getSimpleName(), "ACTION_UP");
@@ -270,7 +279,6 @@ public class IndexView extends View {
 
             }
         });
-        if(STATE == STATE_HIDE)
         valueAnimator.start();
     }
 
@@ -298,22 +306,25 @@ public class IndexView extends View {
                 }
             }
         });
-        if(STATE == STATE_SHOWING){
             valueAnimator.start();
-        }
-
     }
 
     private int getTouchIndexFromEvent(MotionEvent event) {
         int y = (int) event.getY();
         int index = 0;
-        int tempHeight = mVPadding;
-        while (index < mHeight){
-            if(y < tempHeight + (  (index+1 )* mTextRectHeight)){
+        while (y < mHeight){
+            if(y < mVPadding + (  (index+1 )* mTextRectHeight)){
                 return index>mSections.length-1?mSections.length-1:index;
             }
             index ++;
         }
-        return -1;
+        return mSections.length-1;
+    }
+
+    private RectF mRectF;
+    public RectF getRect(int left) {
+        if(mRectF == null)
+        return mRectF = new RectF(left, 0, mWidth, mHeight);
+        return mRectF;
     }
 }
