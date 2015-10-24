@@ -127,7 +127,12 @@ public class MainActivity extends Activity {
         }
 
         @Override
-        public int getPositionForSection(int i) {
+        public int getPositionForSection(int section) {
+            for (int i = 0; i < mDatas.size(); i++) {
+               if(mSections.charAt(section) == mDatas.get(i).charAt(0)){
+                   listView.setSelection(i);
+               }
+            }
             return 0;
         }
 
