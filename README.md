@@ -9,4 +9,6 @@
             android:layout_gravity="right" android:layout_width="wrap_content"
             android:layout_height="match_parent"/>
 
-<img src="d.gif">
+<video src="device-2016-03-24-193431.mp4" controls="controls">
+您的浏览器不支持 video 标签。
+</video>
