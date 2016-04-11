@@ -9,4 +9,4 @@
             android:layout_gravity="right" android:layout_width="wrap_content"
             android:layout_height="match_parent"/>
 
-<img src="d.gif">
+<img src="index.gif">
