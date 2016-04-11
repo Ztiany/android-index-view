@@ -1,3 +1,5 @@
+# 仿魅族联系人，圈圈加上了缩放动画
+
 # IndexView
 
     <ListView android:layout_width="match_parent" android:layout_height="match_parent"
@@ -9,4 +11,6 @@
             android:layout_gravity="right" android:layout_width="wrap_content"
             android:layout_height="match_parent"/>
 
-<img src="index.gif">
+![](index.gif)
+
+
