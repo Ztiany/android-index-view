@@ -28,22 +28,19 @@ public class IndexView extends View {
     }
 
     private String[] mSections;//所有索引
-    private int mTextSize = 12;//默认字体大小
+    private static final int TEXT_SIZE = 12;//默认字体大小
     private int mHPadding = 10;//水平内边距
-    private int mVPadding = 10;//锤子边距
+    private int mVPadding = 10;//垂直边距
     private int mWidth;//宽度
     private int mHeight;//高度
 
     private int mTextRectHeight;//单个文字区域高度
-
-
     private int mRound = 5;//弧度
-
     private TextPaint mTextPaint;//索引文字画笔
     private Paint mRectPaint;//灰色区域画笔
     private Paint mPopPaint;//气泡画笔
     private TextPaint mPopTextPaint;//汽包文字画笔
-
+    private RectF mRectF;
     private SectionIndexer mIndexer;
 
     private int mTextWidth;//文字宽度
@@ -60,17 +57,13 @@ public class IndexView extends View {
     private float mCircleRadius = 40;//圆圈半径
     private float mDynamicCircleRadius ;//动态圆圈班级
     private int mAnimTime = 300;//动画时间
-
-    private float scaledDensity;
-
-    private Path mPath;
-
+    private float mScaledDensity;
 
 
     private void init() {
 
         mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-        mTextPaint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP , mTextSize , getResources().getDisplayMetrics()));
+        mTextPaint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP , TEXT_SIZE, getResources().getDisplayMetrics()));
         mTextPaint.setColor(Color.BLACK);
         mRectPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mRectPaint.setColor(Color.GRAY);
@@ -79,8 +72,7 @@ public class IndexView extends View {
 
         mPopTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
         mPopTextPaint.setColor(Color.GREEN);
-        mPath = new Path();
-        scaledDensity =  getContext().getResources().getDisplayMetrics().scaledDensity;
+        mScaledDensity =  getContext().getResources().getDisplayMetrics().scaledDensity;
     }
 
     public void setAdapter(Adapter adapter) {
@@ -122,7 +114,6 @@ public class IndexView extends View {
             widthResult = widthSize;
         }
         else{
-
             widthResult = (int) (mCircleRightMargin + mCircleRadius*2  + mTextWidth + 2 * mHPadding);
             if (widthMode == MeasureSpec.AT_MOST) {
                 widthResult = Math.min(widthSize, widthResult);
@@ -143,7 +134,6 @@ public class IndexView extends View {
         int drawRectWidth = mTextWidth + 2* mHPadding;
         int left = mWidth - drawRectWidth;
 
-
         //画背景
         if(drawPop ) {
             canvas.drawRoundRect(getRect(left), mRound, mRound, mRectPaint);
@@ -153,7 +143,6 @@ public class IndexView extends View {
         canvas.save();
         canvas.translate(0 , mVPadding);
         float baseY = mTextRectHeight/2 +  ((Math.abs(mTextPaint.ascent()-Math.abs(mTextPaint.descent()))) / 2);
-
 
         for (int i = 0 ; i < length ; i ++){
             int startX =   left +     (int) (drawRectWidth/2 - mTextPaint.measureText(sections[i])/2);
@@ -166,40 +155,21 @@ public class IndexView extends View {
 
 
             Log.e(getClass().getSimpleName(), "mTouchY = " + mTouchY);
-//            float touchY = (mTouchY < 0) ? 0 : ((mTouchY > mHeight) ? mHeight : mTouchY) - mDynamicCircleRadius;
             float circleX = (mCircleRadius*2)-mDynamicCircleRadius;
-//            touchY = touchY < (mCircleRadius / 2) ? (mCircleRadius / 2) : (touchY > (mHeight - mCircleRadius / 2) ? (mHeight - mCircleRadius / 2) : touchY) ;
             float touchY = mTouchY - mDynamicCircleRadius;
             if(touchY < mDynamicCircleRadius){
                 touchY =  mDynamicCircleRadius;
             }else if(touchY > mHeight - mDynamicCircleRadius) {
                 touchY = mHeight-mDynamicCircleRadius;
             }
-
-
             //画圆圈
             canvas.drawCircle(circleX , touchY, mDynamicCircleRadius, mPopPaint);
-
-
-       /*     //画曲线
-            float arcX = mCircleRadius*2 + mCircleRightMargin;
-            mPath.reset();
-            mPath.moveTo(circleX - mDynamicCircleRadius  , touchY);
-            mPath.quadTo(circleX ,touchY+mDynamicCircleRadius*2 , arcX ,  touchY+mDynamicCircleRadius );
-            mPath.quadTo(circleX ,touchY+mDynamicCircleRadius*2 , circleX , touchY);
-            canvas.drawPath(mPath , mPopPaint);*/
-
-
             //画文字
-            mPopTextPaint.setTextSize(mDynamicCircleRadius*2/scaledDensity);
+            mPopTextPaint.setTextSize(mDynamicCircleRadius*2/ mScaledDensity);
             float textStartX = circleX - mPopTextPaint.measureText(mSections[mTouchIndex]  )/2;
             float textBaseY = touchY +  (     Math.abs(mPopTextPaint.ascent()) - Math.abs(mPopTextPaint.descent())  )/ 2;
             canvas.drawText(mSections[mTouchIndex] , textStartX , textBaseY ,  mPopTextPaint);
-
-
-
         }
-
     }
 
 
@@ -209,7 +179,6 @@ public class IndexView extends View {
         if(mSections == null || mSections.length ==0){
             return false;
         }
-
         int action = event.getAction();
         int x = (int) event.getX();
         mTouchY = (int) event.getY();
@@ -220,9 +189,6 @@ public class IndexView extends View {
                 drawPop = true;
         }
 
-
-
-
         mTouchIndex = getTouchIndexFromEvent(event);
         if (mIndexer != null) {
             mIndexer.getPositionForSection(mTouchIndex);
@@ -230,7 +196,6 @@ public class IndexView extends View {
 
         Log.d(this.getClass().getSimpleName() , "index = "+ mTouchIndex);
         Log.d(this.getClass().getSimpleName() , "drawPop = "+ drawPop);
-
 
         switch (action) {
             case MotionEvent.ACTION_DOWN:
@@ -252,7 +217,6 @@ public class IndexView extends View {
                 startHide();
                 break;
         }
-
         return true;
     }
 
@@ -276,7 +240,6 @@ public class IndexView extends View {
                 }else {
                     valueAnimator.cancel();
                 }
-
             }
         });
         valueAnimator.start();
@@ -321,7 +284,7 @@ public class IndexView extends View {
         return mSections.length-1;
     }
 
-    private RectF mRectF;
+
     public RectF getRect(int left) {
         if(mRectF == null)
         return mRectF = new RectF(left, 0, mWidth, mHeight);
